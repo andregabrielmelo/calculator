@@ -1,0 +1,15 @@
+{
+    "name": "calculator",
+    "version": "1.0.0",
+    "description": "Simple calculator project with js",
+    "main": "index.js",
+    "repository": "https://github.com/andregabrielmelo/calculator.git",
+    "author": "Redakas <andregabrielmelo@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+        "test": "jest"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
+    }
+}
