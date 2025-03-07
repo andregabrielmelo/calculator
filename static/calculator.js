@@ -16,7 +16,7 @@ const operations = [
         function: subtract,
     },
     {
-        operator: "x",
+        operator: "*",
         function: multiply,
     },
     {
@@ -30,4 +30,6 @@ const operate = (operator, a, b) => {
     return func.function(a, b);
 };
 
-export { add, subtract, multiply, divide, operations, operate };
+const changeSign = (number) => number * -1;
+
+export { add, subtract, multiply, divide, operations, operate, changeSign };

@@ -1,52 +1,36 @@
-import { operations, operate } from "./calculator.js";
+import { operate, changeSign } from "./calculator.js";
 
 let display = document.querySelector("#display");
 
-let expression = "";
-const operators = operations.map((item) => item["operator"]);
+let numbers = [];
+let operator = undefined;
+let clearDisplay = false;
 
-const addToExpression = (item) => (expression += item);
+const addNumber = (num) => numbers.push(num);
+const changeOperator = (opt) => (operator = opt);
 const changeDisplay = (content) => (display.value = content);
+const clear = () => {
+    changeDisplay("");
+    numbers = [];
+    operator = undefined;
+};
 
 const calculate = () => {
-    let [a, operator, b] = cleanExpression(expression); // Get values and operator
+    let [a, b] = numbers; // Get values and operator
     let result = operate(operator, parseFloat(a), parseFloat(b));
-    changeDisplay(result); // Calculate the result
+    numbers = [];
+    operator = undefined;
     return result;
 };
 
-function cleanExpression(expression) {
-    // Remove whitespace and get all characters of the expression in a string
-    let cleanedExpression = expression.replaceAll(" ", "").split("");
-
-    // Put whitespace arround operators
-    cleanedExpression = cleanedExpression.map((item) => {
-        if (
-            operations.find((operation) => item === operation["operator"]) !=
-            undefined
-        ) {
-            return ` ${item} `;
-        } else {
-            return item;
-        }
-    });
-    // Join all characters into string separate the expression into numbers and operators inside a array
-    cleanedExpression = cleanedExpression.join("").split(" ");
-
-    return cleanedExpression;
-}
-
 const buttonsElements = document.querySelectorAll(".btn");
 buttonsElements.forEach((button) => {
-    if (button.id != "equals") {
+    if (button.id != "equals" && button.id != "sign" && button.id != "clear") {
         button.addEventListener("click", (event) => {
-            if (
-                operators.find((item) => item === expression.at(-1)) !=
-                undefined
-            ) {
-                changeDisplay("");
+            if (clearDisplay) {
+                display.value = "";
+                clearDisplay = false;
             }
-            addToExpression(event.target.innerHTML);
 
             display.value += event.target.innerHTML;
         });
@@ -54,24 +38,30 @@ buttonsElements.forEach((button) => {
 });
 
 const operatorsElements = document.querySelectorAll(".operator");
-operatorsElements.forEach((operator) => {
-    operator.addEventListener("click", (event) => {
-        if (cleanExpression(expression).length === 3) {
+operatorsElements.forEach((calculatorOperator) => {
+    calculatorOperator.addEventListener("click", (event) => {
+        event.target.focus();
+
+        if (operator != undefined) {
+            addNumber(display.value);
             let result = calculate();
-            expression = "";
-            addToExpression(result);
+            changeDisplay(result); // Calculate the result
         }
 
-        event.target.focus();
-        addToExpression(event.target.innerHTML);
+        changeOperator(event.target.innerHTML);
+        addNumber(display.value);
+        clearDisplay = true;
     });
 });
 
-document.querySelector("#clear").addEventListener("click", (event) => {
-    changeDisplay("");
-    expression = "";
-});
+document.querySelector("#clear").addEventListener("click", () => clear());
 
 document.querySelector("#equals").addEventListener("click", (event) => {
-    calculate();
+    addNumber(display.value);
+    let result = calculate();
+    changeDisplay(result); // Calculate the result
+});
+
+document.querySelector("#sign").addEventListener("click", () => {
+    display.value = changeSign(display.value);
 });
